@@ -1,0 +1,5 @@
+cn.itcast.shop.index.action
+cn.itcast.shop.user.action
+cn.itcast.shop.user.dao
+cn.itcast.shop.user.service
+cn.itcast.shop.user.vo

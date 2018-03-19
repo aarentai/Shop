@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>  
+<beans 
+xmlns="http://www.springframework.org/schema/beans" 
+xmlns:context="http://www.springframework.org/schema/context" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:aop="http://www.springframework.org/schema/aop"  
+    xmlns:tx="http://www.springframework.org/schema/tx" 
+    xmlns:p="http://www.springframework.org/schema/p" 
+    xmlns:util="http://www.springframework.org/schema/util"
+     xmlns:jdbc="http://www.springframework.org/schema/jdbc"  
+    xmlns:cache="http://www.springframework.org/schema/cache"  
+    xsi:schemaLocation="  
+    http://www.springframework.org/schema/context  
+    http://www.springframework.org/schema/context/spring-context.xsd  
+    http://www.springframework.org/schema/beans  
+    http://www.springframework.org/schema/beans/spring-beans.xsd  
+    http://www.springframework.org/schema/tx  
+    http://www.springframework.org/schema/tx/spring-tx.xsd  
+    http://www.springframework.org/schema/aop  
+    http://www.springframework.org/schema/aop/spring-aop.xsd  ">
+    
+  <!-- 配置连接池 -->
+  <!-- 引入外部的属性文件 -->
+  <context:property-placeholder location="classpath:jdbc.properties"/>
+  <!-- 配置c3p0连接池 -->
+       <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">  
+          <!-- 用户名-->  
+          <property name="user" value="${jdbc.user}"/>  
+          <!-- 用户密码-->  
+          <property name="password" value="${jdbc.password}"/>  
+          <property name="driverClass" value="${jdbc.driver}"/>  
+          <property name="jdbcUrl" value="${jdbc.url}"/>  
+          </bean>
+          
+    <!-- hibernate的相关信息-->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+    <!-- 注入连接池 -->
+    <property name="dataSource" ref="dataSource"/>
+    <!-- 配置hibernate的其他属性 -->
+    <property name="hibernateProperties">
+    	<props>
+    		<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+    		<prop key="hibernate.show_sql">true</prop>
+    		<prop key="hibernate.format_sql">true</prop>
+    		<prop key="hibernate.connection.autocommit">false</prop>
+    		<prop key="hibernate.hbm2ddl.auto">update</prop>
+    	</props>
+    </property>
+    <property name="mappingResource">
+    <list>
+    <value>cn/itcast/shop/user/vo/User.hbm.xml</value>
+    <value>cn/itcast/shop/category/vo/Category.hbm.xml</value>
+    <value>cn/itcast/shop/category/vo/Product.hbm.xml</value>
+    <value>cn/itcast/shop/categorysecond/vo/CategorySecond.hbm.xml</value>
+    <value>cn/itcast/shop/order/vo/Order.hbm.xml</value>
+    <value>cn/itcast/shop/order/vo/OrderItem.hbm.xml</value>
+    </list>
+    </property>
+    
+    </bean>
+    
+    <!-- 事务管理 -->
+    <!-- 事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+			<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<!-- 开启注解事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	
+	
+	
+	<!-- Action配置========================================================== -->
+	<!-- 首页访问的Action -->
+	<bean id="indexAction" class="shop.index.action.IndexAction" scope="prototype">
+			<property name="categoryService" ref="categoryService"/>
+			<property name="productService" ref="productService"/>
+	</bean>
+	
+	<!-- 用户模块的Action -->
+	<bean id="userAction" class="shop.user.action.UserAction"  scope="prototype">
+	<property name="userService" ref="userService"/>
+	</bean>
+	
+	<!-- 商品模块的Action -->
+	<bean id="productAction" class="shop.product.action.ProductAction"  scope="prototype">
+	<property name="productService" ref="productService"/>
+	</bean>
+	
+	<!-- 购物车模块的Action -->
+	<bean id="cartAction" class="shop.cart.action.CartAction"  scope="prototype">
+	<property name="productService" ref="productService"/>
+	</bean>
+	
+	<!-- 订单模块的Action -->
+	<bean id="orderAction" class="shop.cart.action.OrderAction"  scope="prototype">
+	<property name="orderService" ref="orderService"/>
+	</bean>
+	
+	
+	
+	
+	
+	<!-- Service配置========================================================= -->
+	<bean id="userService" class="shop.user.service.UserService">
+		<property name="userDao" ref="userDao"/>
+	</bean>
+	
+	<bean id="categoryService" class="shop.category.service.CategoryService">
+	<property name="categoryDao" ref="categoryDao"/>
+	</bean>
+	
+	<bean id="productService" class="shop.product.service.ProductService">
+	<property name="productDao" ref="productDao"/>
+	</bean>
+	
+	<bean id="orderService" class="shop.product.service.OrderService">
+	<property name="orderDao" ref="orderDao"/>
+	</bean>
+	
+	
+	
+	
+	
+	<!-- Dao配置============================================================= -->
+	<bean id="userDao" class="shop.user.dao.UserDao">
+	<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="categoryDao" class="shop.category.dao.CategoryDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="productDao" class="shop.product.dao.ProductDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="orderDao" class="shop.product.dao.OrderDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+</beans>  

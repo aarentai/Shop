@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+    <constant name="struts.devMode" value="false" />
+
+	<package name="shop" extends="struts-default" namespace="/">
+	    <global-results>
+    	<result name="msg">/WEB-INF/jsp/msg.jsp</result>
+		<result name="login">/WEB-INF/jsp/login.jsp</result>
+    </global-results>
+    
+	<!-- 配置首页访问的action -->
+	<action name="index" class="indexAction">
+		<result name="index">/WEB-INF/jsp/index.jsp</result>
+	</action>
+	
+	<!-- 配置用户模块的action -->
+	<action name="user_*" class="userAction" method="{1}">
+			<result name="registPage">/WEB-INF/jsp/regist.jsp</result>
+			<result name="loginPage">/WEB-INF/jsp/login.jsp</result>
+			<result name="loginSuccess" type="redirectAction">index</result>
+			<result name="quit" type="redirectAction">index</result>
+	</action>
+	
+	<!-- 配置商品模块的action -->
+	<action name="product_*" class="productAction" method="{1}">
+		<result name="findByPid">/WEB-INF/jsp/product.jsp</result>
+		<result name="findByCid">/WEB-INF/jsp/productList.jsp</result>
+		<result name="findByCsid">/WEB-INF/jsp/productList.jsp</result>
+	</action>
+	
+	<!-- 配置购物车模块的action -->
+	<action name="cart_*" class="cartAction" method="{1}">
+		<result name="addCart">/WEB-INF/jsp/cart.jsp</result>
+		<result name="myCart">/WEB-INF/jsp/cart.jsp</result>
+		<result name="clearCart">/WEB-INF/jsp/cart.jsp</result>
+		<result name="removeCart">/WEB-INF/jsp/cart.jsp</result>
+	</action>
+	
+	<!-- 配置订单模块的action -->
+	<action name="order_*" class="orderAction" method="{1}">
+		<result name="saveSuccess">/WEB-INF/jsp/order.jsp</result>
+		<result name="findByUidSuccess">/WEB-INF/jsp/orderList.jsp</result>
+	</action>
+	</package>
+</struts>
